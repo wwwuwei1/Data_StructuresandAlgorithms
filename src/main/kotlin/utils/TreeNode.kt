@@ -1,4 +1,4 @@
-package net.onest.tree
+package utils
 
 data class TreeNode(
     var `val`: Int,
