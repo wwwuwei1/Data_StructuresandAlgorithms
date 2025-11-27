@@ -135,23 +135,30 @@ import kotlin.math.sqrt
 //    println(stu1===stu3)
 //    println(stu1===stu4)
 //}
-fun main() {
-//    var stu = StudentTest("小明",18)
-//    println("Hello World")
-//    stu.hello("小红")
-//    var a: Int = 10
-//    var b: Int = 5
-//    var c: Double = b/a.toDouble()
-//    println(c)
-    var Stu1 = StudentTest("吴大玮", 20)
-    var Stu2 = StudentTest("郑大彤", 18)
-//    var stu3 = Stu1-Stu2
-//    println(stu3.name)
-//    println(stu3.age)
-    Stu1 love Stu2
-    var stu3: StudentTest? = StudentTest("wuwei", 20)
-    if (stu3 != null) {
-        stu3.name
-    }
-    println(stu3?.name)
+//fun main() {
+////    var stu = StudentTest("小明",18)
+////    println("Hello World")
+////    stu.hello("小红")
+////    var a: Int = 10
+////    var b: Int = 5
+////    var c: Double = b/a.toDouble()
+////    println(c)
+//    var Stu1 = StudentTest("吴大玮", 20)
+//    var Stu2 = StudentTest("郑大彤", 18)
+////    var stu3 = Stu1-Stu2
+////    println(stu3.name)
+////    println(stu3.age)
+//    Stu1 love Stu2
+//    var stu3: StudentTest? = StudentTest("wuwei", 20)
+//    if (stu3 != null) {
+//        stu3.name
+//    }
+//    println(stu3?.name)
+//}
+fun main(){
+    var stu = Student("小明",18)
+    println(stu.getName())
+    stu.setName("小刚")
+    stu.setName("小王")
+    println(stu.getName())
 }

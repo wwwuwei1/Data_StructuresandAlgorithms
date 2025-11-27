@@ -503,7 +503,7 @@ a++,a--也可以进行重载，但是会直接返回重载函数中的值，对�
 
 kotlin运算符重载函数极其强大，甚至连小括号都可以重载，对于不同运算符的重载会有不同的使用
 
-(八)中缀函数
+### (八)中缀函数
 
 作用:提高代码的可读性，使代码看起来更像自然语言
 
@@ -521,7 +521,7 @@ stu1 love stu2
 
 就可以使用更简洁易懂的代码来使用这个函数，增强文章的可读性
 
-(八)空值和空类型
+### (九)空值和空类型
 
 Kotlin中不允许把空值赋值给变量
 
@@ -558,3 +558,112 @@ println(stu3?.name)
 ```
 
 这就是安全运算符"?."
+
+### (十)解构声明
+
+有时候,我们可以调用对象的某个属性,比如说:
+
+```kotlin
+fun main(){
+    val stu = Student("小明",18)
+    println(stu.name)
+    println(stu.age)
+}
+```
+
+那么有没有办法可以直接获取一个对象的所有属性呢,当然是有的,**也就是解构**
+
+要使一个类的属性支持解构,需要定义componentN函数并通过返回值的形式返回解构的结果
+
+```kotlin
+class Student(var name:String,var age:Int){
+    operator fun component1() = name //表示解构出来的第一个参数
+    operator fun component2() = age  //表示解构出来的第二个参数
+    operator fun component3.....// 以此类推
+}
+```
+
+```kotlin
+val(a,b)=stu //解构出来的参数按顺序就是componentN的结果
+```
+
+如果想要第二个参数而第一个参数不需要,可以直接使用 _ 来忽略掉
+
+```kotlin
+val (_,b) = stu
+println("年龄:$b")
+```
+
+解构也常和lambda表达式连用:
+
+```kotlin
+val func : (String) -> Unit = {(a,b) //
+    println("姓名")
+}
+```
+
+**简单来说，解构声明就像"拆快递"**：你收到一个包裹（对象），解构声明让你可以一次性拆开，直接拿到里面的各个物品（属性），而不需要先拆包装再一个个拿出来。
+
+### (十一)包和导入
+
+新建包:一般来说使倒着来的,比如说baidu.com的包就是com.baidu
+
+在包下新建类,会自动导入该包,比如说在com.baidu下建一个teat.kt,会自动导入
+
+```kotlin
+package com.baidu
+```
+
+不同包里的类不能互通,所以如果想使用不同包中定义的类或者变量或函数,就要导入包
+
+```kotlin
+import com.test.User //使用import导入包,导入时 包名.类型/函数/变量名称 来完成
+import com.test.*  //使用*一次性导入全部内容
+```
+
+### (十二)访问权限控制
+
+public:默认就是public,也就是公开的,可以导入此类/函数/变量
+
+private:为私有的,只有在本文件中才能访问,其他文件不能导入
+
+internal:在项目中可以使用,但是别人想引用此项目不可以
+
+## 十.封装,继承和多态
+
+### (一)类的封装
+
+属性的封装,比如说别人可以使用我的类,但是我并不想让别人随便动我的属性,就可以对属性进行封装,通过调用函数来获取属性值
+
+```kotlin
+class Student( private var name:String,private var age:Int){
+    fun getName():String = name
+    fun steName(name:String){
+        if(name.contains("刚")){
+            println("名字不能带有刚")
+            return
+        }
+        this.name = name
+    }
+}
+```
+
+```kotlin
+fun main(){
+    var stu = Student("小明",18)
+    println(stu.getName())
+    stu.setName("小刚")
+    stu.setName("小王")
+    println(stu.getName())
+}
+```
+
+```kotlin
+小明
+名字不能含有刚
+小王
+```
+
+这样就可以来确保属性的值不会改变,就算允许改变设定了setName也可以对改变增加规则,这就是封装的作用
+
+同样的对属性加上private之后,别人也无法根据我的属性来创建函数,只有我能从类内部创建函数,别人想使用这个功能,只能调用我的类中的函数
