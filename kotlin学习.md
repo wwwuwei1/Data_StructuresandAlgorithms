@@ -316,7 +316,7 @@ println(func1(""))
 
 这段代码种的变量fun1为非直接引用函数赋值而是直接创建新的函数进行赋值
 
-### (四.)lambda表达式
+### (四)lambda表达式
 
 在kotlin中,定义函数类型的变量时,将后面的创建函数的标准写法直接简写成一个花括号的形式,然后写函数主体,这就是lambda表达式,其中it在该表达式中代指输入的形参
 
@@ -667,3 +667,297 @@ fun main(){
 这样就可以来确保属性的值不会改变,就算允许改变设定了setName也可以对改变增加规则,这就是封装的作用
 
 同样的对属性加上private之后,别人也无法根据我的属性来创建函数,只有我能从类内部创建函数,别人想使用这个功能,只能调用我的类中的函数
+
+### (二)类的继承
+
+类的继承就是子类继承父类,减少重复代码的定义
+
+比如说学生这一父类,都会睡觉吃饭逃课
+其下的子类有美术生,体育生,计算机生,分别有自己独特的技能
+
+在kotlin,kotlin的类都是"终态"的(不能被任何类继承)要使类可继承,需要使用
+
+**open**关键字标记需要被继承的类,说明设个类可以被继承
+
+```kotlin
+open class Student()
+open class ArtStudent : Student()
+class SuperArtStudent : ArtStudent()
+```
+
+父类使用open关键字可以被子类继承,子类也可以被子类的子类继承
+
+子类继承时会把父类中定义的一切都继承过去,比如父类定义的变量,函数等,同样子类的子类也会继承父类和子类中的元素
+
+```kotlin
+open class Student(){
+    var name : String = "小明"
+    fun hello() = println("大家好,我叫$name")
+}
+open calss ArtStudent : Student(){
+    fun test() = println("大家好,我叫$name,我是个美术生")
+}
+class SuperArtStudent : ArtStudent()
+```
+
+```kotlin
+fun main(){
+    var student = SuperArtStudent()
+    student.hello()//虽然是父类定义的函数,子类的子类也可以调用
+}
+//除非在父类中把变量和函数加上private修饰符,这样就无法访问了
+//当然如果使用protected修饰符,那么只是在本类外面无法访问,在本类里的子类和子类的子类都可以进行访问
+```
+
+一个子类只能继承一个父类,不能同时继承多个父类,但是一个父类可以被多个子类继承
+
+初始化的注意点
+
+```kotlin
+open class Student(var name:String,var age:Int){
+    init{
+        println("我是父类")
+    }
+    fun hello() = println("大家好,我叫$name")
+}
+open calss ArtStudent(name:String,age:Int):Student(name,age){
+    init{
+        println("我是子类")
+    }
+    fun draw() = println("我会画画")
+}
+```
+
+```kotlin
+fun main(){
+    var student = ArtStudent("小明",18)
+    student.hello
+    student.draw
+}
+```
+
+```kotlin
+我是父类
+我是子类
+大家好,我叫小明
+我会画画
+```
+
+父类和子类都使用初始化语句之后,执行时会先执行父类和子类的初始化语句,再执行各自类的语句
+
+子类初始化之前必须调用一次父类的构造函数,必须是父类先初始化,子类才能能使用
+
+### (三)属性的覆盖
+
+有时候我们希望子类继承父类的某些属性,但是希望修改这些属性的默认实现
+就比如说美术生也会打招呼但是他们打招呼的方式和普通学生不太一样
+
+我们就可以使用**override**这个关键字对这个属性进行重写(覆盖)
+
+```kotlin
+open class Student(var name:String,var age:Int){
+    open fun hello()=println("大家好")
+    //需要注意的事,函数也是需要添加open关键字才能被子类覆盖
+}
+class ArtStudent(name:String,age:Int):Student(name,age){
+    fun draw() = println("我会画画")
+    //在子类中编写一个同名函数,并添加override关键字,就可以在子类中进行覆盖了
+    override fun hello() = println("哦哈呦")
+}
+```
+
+```kotlin
+fun main(){
+    var student = Student("小明",18)
+    student.hello
+    var student1 = ArtStudent("小花",18)
+    student.hello
+}
+```
+
+```kotlin
+大家好
+哦哈呦
+```
+
+如果想要既覆盖又把原来父类中的也输出出来,就可以使用super关键字
+
+```kotlin
+class SportStudent(name:String,age:Int):Student(name,age){
+    override fun hello(){
+        println("大家下午好")
+        super.hello()
+    }
+}
+```
+
+对变量也可以重写,实现形式差不多
+
+```kotlin
+class EStudent(override val name:String,val age:Int):Student(name,age){//在主构造函数中进行覆盖,会使用传入的变量进行覆盖
+    override fun hello(){
+        println("大家下午好")
+        super.hello()
+    }
+}
+```
+
+子类可以当作父类来使用,比如说:
+
+```kotlin
+var student : Student = ArtStudent()
+```
+
+ArtStudent 是一个子类,但是也可以当作父类来使用,但是此时只能使用父类中的变量和函数,子类中特有的就不能再使用了,但是为什么说是特有的呢,比如说
+
+```kotlin
+open class Student{
+    var name:String = "小明"
+    open fun hello() = println("大家好")
+}
+class ArtStudent : Student(){
+    override fun hello() = println("哦哈呦")
+    fun test() = println("测试")
+}
+```
+
+```kotlin
+fun main(){
+    var stu : Student = ArtStudent()
+    stu.test()//会报错,因为父类中没有这个函数
+    stu.hello//会输出"哦哈呦",因为父类中有这个函数,只不过终究定义的是一个ArtStudent类的变量,会输出美术生的
+}
+```
+
+### (四)顶层Any类
+
+顶层的Any类有如下三个函数,
+
+首先第一个就是equals函数,相当于是"==",实现方法就是:
+
+底层实现就是
+```kotlin
+class Student(val name: String, val age: Int) {
+    override fun equals(other: Any?): Boolean {
+        if(this === other) return true  //如果引用的是同一个对象，肯定是true不多逼逼
+        if(other !is Student) return false //如果要判断的对象根本不是Student类型的，那也不用继续了
+        if(name != other.name) return false  //判断名字是否相同
+        if(age != other.age) return false  //判断年龄是否相同
+        return true   //都没问题，那就是相等了
+    }
+}
+```
+
+第二个就是hashCode:后续会进行详细介绍
+
+第三个是ToString
+`toString`函数用于快速将对象转换为字符串
+
+更多时候我们希望转换成员属性,更直观的看到对象的属性具有什么值:
+
+```kotlin
+class Student(val name:String,var age:Int){
+    override fun toString():String //重写toString函数
+        return "Student(name = '$name', age=$age )"
+}
+```
+
+### (五)抽象类
+
+有时候,我们定义的类仅仅是为了给其他了类继承,而其本身不需要创建实例对象,比如:
+
+```kotlin
+open class Student protected constructor(){
+    open fun hello() = println("Hello World")
+}
+
+class ArtStudent: Student(){
+    override fun hello() = println("Hello")
+}
+
+class SportStudent: Student(){
+    override fun hello() = println("World")
+}
+```
+
+在这个例子中,可以发现Student类中的hello函数在子类中都会被重写,所以说除非在子类中调用父类的默认实现,负责父类中的类永远不会被调用
+
+这种父类不需要提供实现,完全由子类实现的类,可以使用**abstract**关键字来将一个类声明为抽象类:
+
+```kotlin
+//使用abstract表示这是一个抽象类
+abstract class Student{
+    abstract val name: String //抽象类中存在抽象成员属性
+    abstract fun hello()  //抽象类中的抽象函数
+    //抽象类是不能用private,不然子类就没法重写了
+}
+```
+
+而当一个子类继承抽象类的时候,其中的方法必须要重写
+
+```kotlin
+class ArtStudent(override var name:String = "小明"):Student(){
+    override fun hello() = println("大家好,我叫$name")
+}
+```
+
+### (六)接口
+
+接口必须是抽象的,一般情况下，他只代表某个确切的功能！也就是只能包含函数或属性的定义,接口一般只代表某些功能的抽象，接口包含了一系列内容的定义，类可以实现这个接口，表示类支持接口代表的功能。
+
+比如说,学生具有以下接口:
+
++ 打游戏
++ 睡觉
++ 学习
+
+我们要做的就是将这一个个功能拆分成一个个接口,然后让学生来实现这些接口
+
+在kotlin中,要声明接口,我们可以使用**interface**关键字
+
+```kotlin
+interface A{
+    val x:String //接口中所有属性默认都是abstract的(可省略关键字)
+    fun sleep()
+}
+interface B{
+    fun game()
+}
+class Student:A,B{
+    override val x:String = "测试"
+    override fun sleep() = println("我想睡觉")
+    override fun game() = println("好想玩游戏")
+}
+```
+
+相较于抽象类,接口更加的纯粹,一切内容都是抽象的,只能由子类来实现
+
+那么接口和抽象类有什么区别呢
+
+接口不能作为状态的保存,只能是定义属性,实现都是由类来调用接口来实现,而在抽象类中可以定义具体的属性
+
+使用场景:
+
++ *当多个类有共同的"本质"时使用抽象类*,比如说美术生会打招呼,体育生会打招呼
++ *当类需要具备某种"能力"时使用接口* ,比如说学生会吃饭睡觉
+
+接口也可以继承其他接口,并且可以是继承多个接口
+
+```kotlin
+interface C: A, B
+class Student: C //直接获得三个接口的功能
+```
+
+当然接口也有缺陷,比如说接口A中定义了一个函数,接口B中也定义了一个函数
+```kotlin
+interface A{
+    fun hello() = println("hello")
+}
+interface B{
+    fun hello() = println("World")
+}
+class Student: A, B{
+    override fun hello() = super<B>.hello() //如果A,B接口中同时定义了同一个名称的函数,那么如果想使用其中一个就要使用super<A/B>.hello()这样的格式
+}
+```
+

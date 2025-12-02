@@ -28,13 +28,46 @@ package net.onest
 //    }
 //}
 //属性的封装
-class Student(private var name: String,private var age:Int){
-    fun getName():String=name
-    fun setName(name:String){
-        if(name.contains("刚")){
-            println("名字不能含有刚")
-            return
-        }
-        this.name = name
-    }
+//class Student(private var name: String,private var age:Int){
+//    fun getName():String=name
+//    fun setName(name:String){
+//        if(name.contains("刚")){
+//            println("名字不能含有刚")
+//            return
+//        }
+//        this.name = name
+//    }
+//}
+//open class Student(var name:String,var age:Int){
+//    open fun hello()=println("我会打招呼")
+//    //需要注意的事,函数也是需要添加open关键字才能被子类覆盖
+//}
+//class ArtStudent(name:String,age:Int):Student(name,age){
+//    fun draw() = println("我会画画")
+//    //在子类中编写一个同名函数,并添加override关键字,就可以在子类中进行覆盖了
+//    override fun hello() = println("哦哈呦")
+//}
+//class SportStudent(name:String,age:Int):Student(name,age){
+//    override fun hello(){
+//        println("大家下午好")
+//        super.hello()
+//    }
+//}
+//open class Student{
+//    var name:String = "小明"
+//    open fun hello() = println("大家好")
+//}
+//class ArtStudent : Student(){
+//    override fun hello() = println("哦哈呦")
+//    fun test() = println("测试")
+//}
+//使用abstract表示这是一个抽象类
+abstract class Student{
+    abstract val name: String //抽象类中存在抽象成员属性
+    abstract fun hello()  //抽象类中的抽象函数
+    //抽象类是不能用private,不然子类就没法重写了
+}
+
+class ArtStudent(override var name:String = "小明"):Student(){
+    override fun hello() = println("大家好,我叫$name")
 }

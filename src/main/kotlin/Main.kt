@@ -155,10 +155,19 @@ import kotlin.math.sqrt
 //    }
 //    println(stu3?.name)
 //}
+//fun main(){
+//    var stu = Student("小明",18)
+//    println(stu.getName())
+//    stu.setName("小刚")
+//    stu.setName("小王")
+//    println(stu.getName())
+//}
+//fun main(){
+//    var stu :Student = ArtStudent()
+//    stu.hello()
+//}
+//使用abstract表示这是一个抽象类
 fun main(){
-    var stu = Student("小明",18)
-    println(stu.getName())
-    stu.setName("小刚")
-    stu.setName("小王")
-    println(stu.getName())
+    var stu: ArtStudent = ArtStudent()
+    stu.hello()
 }
